@@ -464,7 +464,7 @@
         		<configuration>
           			<linkXref>true</linkXref>
           			<sourceEncoding>utf-8</sourceEncoding>
-          			<minimumTokens>25</minimumTokens>
+          			<minimumTokens>50</minimumTokens>
         		</configuration>
             </plugin>
       		<plugin>
@@ -585,27 +585,3 @@
         </profile>
     </profiles>
 </project>
-
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
-<!-- test -->
