@@ -465,6 +465,13 @@
           			<linkXref>true</linkXref>
           			<sourceEncoding>utf-8</sourceEncoding>
           			<minimumTokens>50</minimumTokens>
+          			<rulesets>
+          				<!-- A rule set, that comes bundled with PMD -->
+          				<ruleset>/rulesets/java/basic.xml</ruleset>
+            			<ruleset>/rulesets/java/braces.xml</ruleset>
+            			<ruleset>/rulesets/java/emptycode.xml</ruleset>
+            			<ruleset>/rulesets/java/unusedcode.xml</ruleset>
+          			</rulesets>
         		</configuration>
             </plugin>
       		<plugin>
