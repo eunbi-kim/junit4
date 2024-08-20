@@ -232,7 +232,10 @@ public final class Throwables {
         "org.junit.runners.",
         "org.junit.experimental.runners.",
         "org.junit.internal.",
-        "junit.",
+        "junit.extensions",
+        "junit.framework",
+        "junit.runner",
+        "junit.textui",
     };
 
     private static final String[] TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES = {
@@ -247,6 +250,7 @@ public final class Throwables {
     private static final String[] REFLECTION_METHOD_NAME_PREFIXES = {
         "sun.reflect.",
         "java.lang.reflect.",
+        "jdk.internal.reflect.",
         "org.junit.rules.RunRules.<init>(",
         "org.junit.rules.RunRules.applyAll(", // calls TestRules
         "org.junit.runners.RuleContainer.apply(", // calls MethodRules & TestRules

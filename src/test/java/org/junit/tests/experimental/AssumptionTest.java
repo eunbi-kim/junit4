@@ -2,9 +2,9 @@ package org.junit.tests.experimental;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNoException;
@@ -159,7 +159,17 @@ public class AssumptionTest {
             Assume.assumeTrue(false);
             fail("should throw AssumptionViolatedException");
         } catch (AssumptionViolatedException e) {
-            // expected
+            assertEquals("got: <false>, expected: is <true>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void assumeFalseWorks() {
+        try {
+            Assume.assumeFalse(true);
+            fail("should throw AssumptionViolatedException");
+        } catch (AssumptionViolatedException e) {
+            assertEquals("got: <true>, expected: is <false>", e.getMessage());
         }
     }
 
@@ -213,13 +223,22 @@ public class AssumptionTest {
         assertThat(testResult(AssumptionFailureInConstructor.class), isSuccessful());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void assumeWithExpectedException() {
-        assumeTrue(false);
+    public static class TestClassWithAssumptionFailure {
+
+        @Test(expected = IllegalArgumentException.class)
+        public void assumeWithExpectedException() {
+            assumeTrue(false);
+        }
     }
 
-    final static String message = "Some random message string.";
-    final static Throwable e = new Throwable();
+    @Test
+    public void assumeWithExpectedExceptionShouldThrowAssumptionViolatedException() {
+        Result result = JUnitCore.runClasses(TestClassWithAssumptionFailure.class);
+        assertThat(result.getAssumptionFailureCount(), is(1));
+    }
+
+    static final String message = "Some random message string.";
+    static final Throwable e = new Throwable();
 
     /**
      * @see AssumptionTest#assumptionsWithMessage()

@@ -106,7 +106,7 @@ public class FailOnTimeout extends Statement {
          * Builds a {@link FailOnTimeout} instance using the values in this builder,
          * wrapping the given statement.
          *
-         * @param statement
+         * @param statement statement to build
          */
         public FailOnTimeout build(Statement statement) {
             if (statement == null) {
@@ -120,7 +120,7 @@ public class FailOnTimeout extends Statement {
     public void evaluate() throws Throwable {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
-        ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+        ThreadGroup threadGroup = threadGroupForNewThread();
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
         thread.setDaemon(true);
         thread.start();
@@ -129,6 +129,31 @@ public class FailOnTimeout extends Statement {
         if (throwable != null) {
             throw throwable;
         }
+    }
+
+    private ThreadGroup threadGroupForNewThread() {
+        if (!lookForStuckThread) {
+            // Use the default ThreadGroup (usually the one from the current
+            // thread).
+            return null;
+        }
+
+        // Create the thread in a new ThreadGroup, so if the time-limited thread
+        // becomes stuck, getStuckThread() can find the thread likely to be the
+        // culprit.
+        ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+        if (!threadGroup.isDaemon()) {
+            // Mark the new ThreadGroup as a daemon thread group, so it will be
+            // destroyed after the time-limited thread completes. By ensuring the
+            // ThreadGroup is destroyed, any data associated with the ThreadGroup
+            // (ex: via java.beans.ThreadGroupContext) is destroyed.
+            try {
+                threadGroup.setDaemon(true);
+            } catch (SecurityException e) {
+                // Swallow the exception to keep the same behavior as in JUnit 4.12.
+            }
+        }
+        return threadGroup;
     }
 
     /**

@@ -1,11 +1,9 @@
 package org.junit.rules;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
@@ -14,11 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -38,8 +34,6 @@ public class TestRuleTest {
                         wasRun = true;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         };
@@ -110,8 +104,6 @@ public class TestRuleTest {
                         runCount++;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }
@@ -151,64 +143,6 @@ public class TestRuleTest {
     }
 
     private static String log;
-
-    public static class OnFailureTest {
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                log += description + " " + e.getClass().getSimpleName();
-            }
-        };
-
-        @Test
-        public void nothing() {
-            fail();
-        }
-    }
-
-    @Test
-    public void onFailure() {
-        log = "";
-        Result result = JUnitCore.runClasses(OnFailureTest.class);
-        assertEquals(String.format("nothing(%s) AssertionError", OnFailureTest.class.getName()), log);
-        assertEquals(1, result.getFailureCount());
-    }
-
-    public static class WatchmanTest {
-        private static String watchedLog;
-
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                watchedLog += description + " "
-                        + e.getClass().getSimpleName() + "\n";
-            }
-
-            @Override
-            protected void succeeded(Description description) {
-                watchedLog += description + " " + "success!\n";
-            }
-        };
-
-        @Test
-        public void fails() {
-            fail();
-        }
-
-        @Test
-        public void succeeds() {
-        }
-    }
-
-    @Test
-    public void succeeded() {
-        WatchmanTest.watchedLog = "";
-        JUnitCore.runClasses(WatchmanTest.class);
-        assertThat(WatchmanTest.watchedLog, containsString(String.format("fails(%s) AssertionError", WatchmanTest.class.getName())));
-        assertThat(WatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", WatchmanTest.class.getName())));
-    }
 
     public static class BeforesAndAfters {
         private static StringBuilder watchedLog = new StringBuilder();
@@ -318,8 +252,6 @@ public class TestRuleTest {
                         wasRun = true;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         };
@@ -397,8 +329,6 @@ public class TestRuleTest {
                         runCount++;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }
@@ -445,147 +375,34 @@ public class TestRuleTest {
         assertEquals(0, result.getFailureCount());
     }
 
-    public static class MethodOnFailureTest {
-        private TestRule watchman = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                log += description + " " + e.getClass().getSimpleName();
-            }
-        };
+    public static class BeforesAndAftersAreEnclosedByRule {
+        private static StringBuilder log;
 
         @Rule
-        public TestRule getWatchman() {
-            return watchman;
-        }
-
-        @Test
-        public void nothing() {
-            fail();
-        }
-    }
-
-    @Test
-    public void methodOnFailure() {
-        log = "";
-        Result result = JUnitCore.runClasses(MethodOnFailureTest.class);
-        assertEquals(String.format("nothing(%s) AssertionError", MethodOnFailureTest.class.getName()), log);
-        assertEquals(1, result.getFailureCount());
-    }
-
-    public static class MethodOnSkippedTest {
-        private TestRule watchman = new TestWatcher() {
-            @Override
-            protected void skipped(AssumptionViolatedException e, Description description) {
-                log += description + " " + e.getClass().getSimpleName();
-            }
-        };
-
-        @Rule
-        public TestRule getWatchman() {
-            return watchman;
-        }
-
-        @Test
-        public void nothing() {
-            Assume.assumeTrue(false);
-        }
-    }
-
-    @Test
-    public void methodOnSkipped() {
-        log = "";
-        Result result = JUnitCore.runClasses(MethodOnSkippedTest.class);
-        assertEquals(String.format("nothing(%s) AssumptionViolatedException", MethodOnSkippedTest.class.getName()), log);
-        assertEquals(0, result.getFailureCount());
-        assertEquals(1, result.getRunCount());
-    }
-
-    public static class MethodWatchmanTest {
-        @SuppressWarnings("unused")
-        private static String watchedLog;
-
-        private TestRule watchman = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                watchedLog += description + " "
-                        + e.getClass().getSimpleName() + "\n";
-            }
-
-            @Override
-            protected void succeeded(Description description) {
-                watchedLog += description + " " + "success!\n";
-            }
-        };
-
-        @Rule
-        public TestRule getWatchman() {
-            return watchman;
-        }
-
-        @Test
-        public void fails() {
-            fail();
-        }
-
-        @Test
-        public void succeeds() {
-        }
-    }
-
-    @Test
-    public void methodSucceeded() {
-        WatchmanTest.watchedLog = "";
-        JUnitCore.runClasses(WatchmanTest.class);
-        assertThat(WatchmanTest.watchedLog, containsString(String.format("fails(%s) AssertionError", WatchmanTest.class.getName())));
-        assertThat(WatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", WatchmanTest.class.getName())));
-    }
-
-    public static class MethodBeforesAndAfters {
-        private static String watchedLog;
+        public TestRule watcher = new LoggingTestWatcher(log);
 
         @Before
         public void before() {
-            watchedLog += "before ";
-        }
-
-        private TestRule watchman = new TestWatcher() {
-            @Override
-            protected void starting(Description d) {
-                watchedLog += "starting ";
-            }
-
-            @Override
-            protected void finished(Description d) {
-                watchedLog += "finished ";
-            }
-
-            @Override
-            protected void succeeded(Description d) {
-                watchedLog += "succeeded ";
-            }
-        };
-
-        @Rule
-        public TestRule getWatchman() {
-            return watchman;
+            log.append("before ");
         }
 
         @After
         public void after() {
-            watchedLog += "after ";
+            log.append("after ");
         }
 
         @Test
         public void succeeds() {
-            watchedLog += "test ";
+            log.append("test ");
         }
     }
 
     @Test
-    public void methodBeforesAndAfters() {
-        MethodBeforesAndAfters.watchedLog = "";
-        JUnitCore.runClasses(MethodBeforesAndAfters.class);
-        assertThat(MethodBeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
+    public void beforesAndAftersAreEnclosedByRule() {
+        BeforesAndAftersAreEnclosedByRule.log = new StringBuilder();
+        JUnitCore.runClasses(BeforesAndAftersAreEnclosedByRule.class);
+        assertEquals("starting before test after succeeded finished ",
+                BeforesAndAftersAreEnclosedByRule.log.toString());
     }
 
     public static class MethodWrongTypedField {
@@ -703,8 +520,6 @@ public class TestRuleTest {
                     public void evaluate() throws Throwable {
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }

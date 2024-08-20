@@ -1,8 +1,8 @@
 package org.junit.tests.validation;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +28,6 @@ public class BadlyFormedClassesTest {
         }
     }
 
-    ;
-
     @RunWith(JUnit4ClassRunner.class)
     public static class BadBeforeMethodWithLegacyRunner {
         @Before
@@ -41,8 +39,6 @@ public class BadlyFormedClassesTest {
         public void someTest() {
         }
     }
-
-    ;
 
     public static class NoTests {
         // class without tests

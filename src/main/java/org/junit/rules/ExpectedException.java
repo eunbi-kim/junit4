@@ -3,25 +3,18 @@ package org.junit.rules;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.StringDescription;
 import org.junit.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 /**
  * The {@code ExpectedException} rule allows you to verify that your code
- * throws a specific exception. Note that, starting with Java 8,
- * {@link org.junit.Assert#assertThrows(java.lang.Class, org.junit.function.ThrowingRunnable)
- * Assert.assertThrows}
- * is often a better choice since it allows you to express exactly where you
- * expect the exception to be thrown. Use
- * {@link org.junit.Assert#expectThrows(java.lang.Class,
- * org.junit.function.ThrowingRunnable) expectThrows}
- * if you need to assert something about the thrown exception.
+ * throws a specific exception.
  *
  * <h3>Usage</h3>
  *
@@ -71,6 +64,13 @@ import org.junit.runners.model.Statement;
  *     throw new NullPointerException(&quot;What happened?&quot;);
  * }</pre>
  *
+ * <p>It is recommended to set the {@link org.junit.Rule#order() order} of the
+ * {@code ExpectedException} to {@code Integer.MAX_VALUE} if it is used together
+ * with another rule that handles exceptions, e.g. {@link ErrorCollector}.
+ * Otherwise failing tests may be successful.
+ * <pre> &#064;Rule(order = Integer.MAX_VALUE)
+ * public ExpectedException thrown = ExpectedException.none();</pre>
+ *
  * <h3>AssumptionViolatedExceptions</h3>
  * <p>JUnit uses {@link AssumptionViolatedException}s for indicating that a test
  * provides no useful information. (See {@link org.junit.Assume} for more
@@ -112,7 +112,13 @@ public class ExpectedException implements TestRule {
     /**
      * Returns a {@linkplain TestRule rule} that expects no exception to
      * be thrown (identical to behavior without this rule).
+     *
+     * @deprecated Since 4.13
+     * {@link org.junit.Assert#assertThrows(Class, org.junit.function.ThrowingRunnable)
+     * Assert.assertThrows} can be used to verify that your code throws a specific
+     * exception.
      */
+    @Deprecated
     public static ExpectedException none() {
         return new ExpectedException();
     }
@@ -173,10 +179,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expect(is(e));
      *     throw e;
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
-    @Deprecated
     public void expect(Matcher<?> matcher) {
         matcherBuilder.add(matcher);
     }
@@ -215,10 +218,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expectMessage(startsWith(&quot;What&quot;));
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
-    @Deprecated
     public void expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
     }
@@ -232,10 +232,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expectCause(is(expectedCause));
      *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
-    @Deprecated
     public void expectCause(Matcher<?> expectedCause) {
         expect(hasCause(expectedCause));
     }
@@ -271,7 +268,7 @@ public class ExpectedException implements TestRule {
 
     private void handleException(Throwable e) throws Throwable {
         if (isAnyExceptionExpected()) {
-            assertThat(e, matcherBuilder.build());
+            MatcherAssert.assertThat(e, matcherBuilder.build());
         } else {
             throw e;
         }

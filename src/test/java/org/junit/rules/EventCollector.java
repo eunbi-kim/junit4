@@ -13,12 +13,12 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-class EventCollector extends RunListener {
+public class EventCollector extends RunListener {
     static Matcher<EventCollector> everyTestRunSuccessful() {
         return allOf(hasNoFailure(), hasNoAssumptionFailure());
     }
 
-    private static Matcher<EventCollector> hasNumberOfFailures(
+    static Matcher<EventCollector> hasNumberOfFailures(
             final int numberOfFailures) {
         return new TypeSafeMatcher<EventCollector>() {
             @Override
@@ -73,7 +73,7 @@ class EventCollector extends RunListener {
         return hasNumberOfAssumptionFailures(0);
     }
 
-    static Matcher<EventCollector> hasSingleFailureWithMessage(String message) {
+    public static Matcher<EventCollector> hasSingleFailureWithMessage(String message) {
         return hasSingleFailureWithMessage(equalTo(message));
     }
 
