@@ -346,7 +346,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
+                <version>3.12.1</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.stephenc.wagon</groupId>
@@ -420,6 +420,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>          
         </plugins>
     </build>
 
