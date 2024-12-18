@@ -305,7 +305,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadocPluginVersion}</version>
                 <configuration>
-                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <stylesheetfile>${project.basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
                     <author>false</author>
                     <version>false</version>
@@ -346,7 +346,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>3.12.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.stephenc.wagon</groupId>
@@ -470,7 +470,7 @@
                 <version>${javadocPluginVersion}</version>
                 <configuration>
                     <destDir>javadoc/latest</destDir>
-                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <stylesheetfile>${project.basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
                     <author>false</author>
                     <version>false</version>
@@ -516,7 +516,6 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.25.0</version>
                 <configuration>
-                  <inputEncoding>utf-8</inputEncoding>
                   <minimumTokens>100</minimumTokens>
                 </configuration>
             </plugin>
